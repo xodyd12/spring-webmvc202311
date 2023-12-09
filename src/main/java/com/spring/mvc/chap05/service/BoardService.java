@@ -4,7 +4,9 @@ import com.spring.mvc.chap05.dto.BoardDetailResponseDTO;
 import com.spring.mvc.chap05.dto.BoardListResponseDTO;
 import com.spring.mvc.chap05.dto.BoardWriteRequestDTO;
 import com.spring.mvc.chap05.entify.Board;
+import com.spring.mvc.chap05.repository.BoardMapper;
 import com.spring.mvc.chap05.repository.BoardRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -12,15 +14,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-//@RequiredArgsConstructor
+
+@RequiredArgsConstructor
 public class BoardService {
 
-    private final BoardRepository boardRepository;
+    private final BoardMapper boardRepository;
 
 
-    public BoardService(@Qualifier("sibal")BoardRepository repository){
-        this.boardRepository = repository;
-    }
+//    public BoardService(@Qualifier("sibal")BoardRepository repository){
+//        this.boardRepository = repository;
+//    }
 
 
     // 목록 조회 중간처리
@@ -46,11 +49,10 @@ public class BoardService {
 
     public Object getDetail(int bno) {
         Board board = boardRepository.findOne(bno);
-        // 조회수 상승처리
-        board.upViewCount();
+        boardRepository.updateCount(bno);
         return new BoardDetailResponseDTO(board);
     }
 
-    //
+
 
 }
