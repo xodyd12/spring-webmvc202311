@@ -7,12 +7,14 @@
     <!-- resultMap : db컬럼명과 자바 클래스 필드명이 완전히 다를때 상황 -->
     <resultMap id="scoreMap" type="com.spring.mvc.chap04.entity.Score">
         <result column="stu_name" property="name"/>
-
     </resultMap>
 
 
     <select id="findAll" resultMap="scoreMap">
         SELECT * FROM tbl_score
+        <if test="sort == 'avg'">
+            ORDER BY average DESC
+        </if>
     </select>
 
     <insert id="save">

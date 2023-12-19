@@ -1,4 +1,4 @@
-package com.spring.mvc.chap05.dto;
+package com.spring.mvc.chap05.dto.response;
 
 import com.spring.mvc.chap05.entify.Board;
 import lombok.EqualsAndHashCode;

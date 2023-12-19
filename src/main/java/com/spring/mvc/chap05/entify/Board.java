@@ -1,6 +1,6 @@
 package com.spring.mvc.chap05.entify;
 
-import com.spring.mvc.chap05.dto.BoardWriteRequestDTO;
+import com.spring.mvc.chap05.dto.request.BoardWriteRequestDTO;
 import lombok.*;
 
 import java.sql.ResultSet;
