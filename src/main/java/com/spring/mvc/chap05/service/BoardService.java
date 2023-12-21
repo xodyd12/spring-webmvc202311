@@ -27,7 +27,8 @@ public class BoardService {
                 .collect(Collectors.toList());
     }
 
-    //글 쓰기 중간처리
+
+
     public void register(BoardWriteRequestDTO dto) {
         //dto를 엔터티로 변환
         Board board = new Board(dto);
