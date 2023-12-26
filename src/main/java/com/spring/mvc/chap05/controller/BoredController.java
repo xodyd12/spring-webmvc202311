@@ -1,4 +1,4 @@
-package com.spring.mvc.chap05.Controller;
+package com.spring.mvc.chap05.controller;
 
 import com.spring.mvc.chap05.common.PageMaker;
 import com.spring.mvc.chap05.common.Search;
