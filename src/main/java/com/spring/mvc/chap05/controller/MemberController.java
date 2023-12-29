@@ -3,12 +3,12 @@ package com.spring.mvc.chap05.controller;
 import com.spring.mvc.chap05.dto.request.LoginRequestDTO;
 import com.spring.mvc.chap05.dto.request.SignUpRequestDTO;
 import com.spring.mvc.chap05.service.LoginResult;
-import com.spring.mvc.chap05.service.MemberService;
+import com.spring.mvc.chap05.service.MemberSerivce;
+import com.spring.mvc.util.LoginUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,16 +20,24 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import static com.spring.mvc.util.LoginUtils.isAutoLogin;
+import static com.spring.mvc.util.LoginUtils.isLogin;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/members")
 @Slf4j
 public class MemberController {
-    private final MemberService memberSerivce;
+    private final MemberSerivce memberSerivce;
 
     //회원 가입 양식 요청
     @GetMapping("/sign-up")
-    public String signUp(){
+    public String signUp(HttpSession session)
+    {
+        //로그인 했을시 회원가입 페이지 이동 x
+//        if (session.getAttribute("login") !=null){
+//            return "redirect:/";
+//        }
         log.info("/members/sign-up GET : forwarding to sign-up.jsp");
         return "members/sign-up";
     }
@@ -74,7 +82,7 @@ public class MemberController {
         log.info("/memebers/sign-in POST!");
         log.info("parameter : {}",dto);
 
-        LoginResult authenticate = memberSerivce.authenticate(dto);
+        LoginResult authenticate = memberSerivce.authenticate(dto, request.getSession(), response);
         log.debug("login result : {} ",authenticate);
 
 //        model.addAttribute("msg",authenticate);
@@ -82,13 +90,41 @@ public class MemberController {
 
         if (authenticate == LoginResult.SUCCESS){ //로그인 성공시
 //            makeLoginCookie(dto, response); // 쿠키로 로그인 유지
-
+            //세션으로 로그인 유지
             memberSerivce.maintainLoginState(request.getSession(), dto.getAccount());
 
             return "redirect:/";
         }
         return "redirect:/members/sign-in";
     }
+
+    // 로그아웃 요청 처리
+    @GetMapping("/sign-out")
+    public String signOut(
+            HttpServletRequest request,
+            HttpServletResponse response
+//            HttpSession session
+    ){
+        // 세션 얻ㄱ기
+        HttpSession session = request.getSession();
+        if (isLogin(session)){
+//          # 자동 로그인 상태인지 확인
+            if (isAutoLogin(request)){
+                // 쿠키를 삭제해주고 DB데이터도 원래대로 돌려놓는다.
+                memberSerivce.autoLoginClear(request,response);
+            }
+            // 세션에서 로그인 정보 기록 삭제
+            session.removeAttribute(LoginUtils.LOGIN_KEY);
+            // 세션을 초기화 (RESET)
+            session.invalidate();
+            return "redirect:/";
+        }
+
+        return "redirect:/members/sign-in";
+    }
+
+
+
 
     private static void makeLoginCookie(LoginRequestDTO dto, HttpServletResponse response) {
         // 쿠키에 로그인 기록을 저장
@@ -99,23 +135,5 @@ public class MemberController {
 
         //쿠키를 클라이언트에게 전송  (Response객체 필요)
         response.addCookie(cookie);
-    }
-
-    // 로그아웃 요청 처리
-    @GetMapping("/sign-out")
-    public String signOut(
-            // HttpServletRequest request
-            HttpSession session
-    ) {
-        // 세션 얻기
-//        HttpSession session = request.getSession();
-
-        // 세션에서 로그인 정보 기록 삭제
-        session.removeAttribute("login");
-
-        // 세션을 초기화(RESET)
-        session.invalidate();
-
-        return "redirect:/";
     }
 }

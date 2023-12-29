@@ -4,16 +4,19 @@ import com.spring.mvc.chap05.common.Page;
 import com.spring.mvc.chap05.common.PageMaker;
 import com.spring.mvc.chap05.dto.request.ReplyModifyRequestDTO;
 import com.spring.mvc.chap05.dto.request.ReplyPostRequestDTO;
+import com.spring.mvc.chap05.dto.response.LoginUserResponseDTO;
 import com.spring.mvc.chap05.dto.response.ReplyDetailResponseDTO;
 import com.spring.mvc.chap05.dto.response.ReplyListResponseDTO;
 import com.spring.mvc.chap05.entify.Reply;
 import com.spring.mvc.chap05.repository.ReplyMapper;
+import com.spring.mvc.util.LoginUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,12 +48,14 @@ public class ReplyService {
                 .build();
     }
 
-    public ReplyListResponseDTO register(ReplyPostRequestDTO dto) throws SQLException{
+    public ReplyListResponseDTO register(ReplyPostRequestDTO dto, HttpSession session) throws SQLException{
         log.debug("register services execute!!!!");
 
 
         //dto를 entity로 변환
-        boolean flag = replyMapper.save(dto.toEntity());
+        Reply reply= dto.toEntity();
+        reply.setAccount(LoginUtils.getCurrentLoginMemberAccount(session));
+        boolean flag = replyMapper.save(reply);
 
         if (!flag) {
             log.warn("replt register failed!!!!");

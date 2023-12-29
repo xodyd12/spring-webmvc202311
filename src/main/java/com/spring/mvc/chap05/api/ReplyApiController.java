@@ -14,6 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -47,7 +48,8 @@ public class ReplyApiController {
     // RequestBody : 비동기요청에서 메시지 바이안에 있는 JSON을 파싱
     @PostMapping
     public ResponseEntity<?> create(@Validated @RequestBody ReplyPostRequestDTO dto
-    , BindingResult result //검증결과 메시지를 가진 객체
+    , BindingResult result,//검증결과 메시지를 가진 객체
+                                     HttpSession session
     ){
         //입력값 검증에 걸리면 400번 코드와 함께 메시지를 클라이언트에 전송
         if(result.hasErrors()){
@@ -60,7 +62,7 @@ public class ReplyApiController {
         log.debug("request parameter : {}", dto);
 
         try {
-            ReplyListResponseDTO responseDTO = replyService.register(dto);
+            ReplyListResponseDTO responseDTO = replyService.register(dto, session);
             return ResponseEntity.ok().body(responseDTO);
         } catch (SQLException e) {
             log.warn("500 status code response !! by : {}", e.getMessage());

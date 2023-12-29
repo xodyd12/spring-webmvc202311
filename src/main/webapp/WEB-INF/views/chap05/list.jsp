@@ -21,7 +21,10 @@
 
     <div class="main-title-wrapper">
         <h1 class="main-title">꾸러기 게시판</h1>
+
+        <c:if test="${login != null}">
         <button class="add-btn">새 글 쓰기</button>
+        </c:if>
     </div>
     <div class="top-section">
         <!-- 검색창 영역 -->
@@ -75,11 +78,14 @@
 
                     </div>
                 </section>
+
+                <c:if test="${login.account == b.account || login.auth == 'ADMIN'}">
                 <div class="card-btn-group">
                     <button class="del-btn" data-href="/board/delete?bno=${b.boardNo}">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
+                </c:if>
             </div>
         </c:forEach>
     </div>
