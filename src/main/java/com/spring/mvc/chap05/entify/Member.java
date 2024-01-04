@@ -34,4 +34,6 @@ public class Member {
     private LocalDateTime regDate;
     private String sessionId;
     private LocalDateTime limitTime;
+    private String profileImage;
+
 }

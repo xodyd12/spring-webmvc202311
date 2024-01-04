@@ -2,7 +2,6 @@ package com.spring.mvc.chap05.service;
 
 import com.spring.mvc.chap05.dto.request.LoginRequestDTO;
 import com.spring.mvc.chap05.dto.request.SignUpRequestDTO;
-import com.sun.net.httpserver.Authenticator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MemberServiceTest {
 
     @Autowired
-    MemberService memberService;
+    MemberSerivce memberService;
 
     @Test
     @DisplayName("회원정보를 전달 하면 비밀번호가 암호화되어 디비에 저장된다.")
@@ -28,7 +27,7 @@ class MemberServiceTest {
                 .email("sanrio123@gmail.com")
                 .build();
         //when
-        boolean flag = memberService.join(dto);
+        boolean flag = memberService.join(dto, savePath);
         //then
         assertTrue(flag);
     }
